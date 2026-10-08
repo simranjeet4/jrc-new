@@ -1,413 +1,439 @@
-import { useRef } from 'react';
+import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import C3DRectangularCubeSlider from '../components/about/C3DRectangularCubeSlider';
-import EstimateForm from '../components/forms/EstimateForm';
 import BeforeAfterSlider from '../components/common/BeforeAfterSlider';
 import { COMPANY } from '../content/siteData';
 import '../styles/kitchen.css';
 
-/**
- * KitchenRemodeling Component
- * Exact pixel-perfect recreation of https://jrchomeremodeling.com/kitchen-remodeling/
- */
+const FORM_ID = 'v8yeCev0amqIMAJD1CZW';
+const FORM_SRC = `https://api.leadconnectorhq.com/widget/form/${FORM_ID}`;
+const FORM_SCRIPT = 'https://link.msgsndr.com/js/form_embed.js';
+
+const heroChips = [
+  'Custom Designs',
+  'Quality Craftsmanship',
+  'On Time & Budget',
+  'Licensed & Insured'
+];
+
+const trustBar = [
+  '5-Star Rated',
+  'Fully Licensed',
+  'On-Time Guarantee',
+  '100% Satisfaction',
+  'Flexible Financing'
+];
+
+const kitchenVideos = [
+  {
+    key: 'transformation',
+    kind: 'vimeo',
+    id: '1191086232',
+    hash: '3a848937e8',
+    title: 'Kitchen Transformation',
+    caption: 'A complete kitchen renovation from start to finish'
+  },
+  {
+    key: 'reveal',
+    kind: 'vimeo',
+    id: '1191086204',
+    hash: 'd24aa130ec',
+    title: 'Before & After Reveal',
+    caption: 'Dramatic transformation of a Colorado kitchen'
+  },
+  {
+    key: 'tour',
+    kind: 'youtube',
+    id: 'qYmNisQRqJY',
+    title: 'Quick Kitchen Tour',
+    caption: 'See our work in 60 seconds'
+  }
+];
+
+const kitchenServices = [
+  {
+    title: 'Custom Kitchen Design',
+    desc: 'Personalized layouts and 3D renderings designed around your lifestyle and budget.',
+    icon: '▦'
+  },
+  {
+    title: 'Cabinet Installation',
+    desc: 'Premium cabinetry, refacing, and installation with soft-close hardware.',
+    icon: '☰'
+  },
+  {
+    title: 'Countertops & Surfaces',
+    desc: 'Granite, quartz, marble countertops with precision measurement.',
+    icon: '▭'
+  },
+  {
+    title: 'Lighting & Electrical',
+    desc: 'Recessed lighting, under-cabinet LEDs, pendant fixtures, electrical upgrades.',
+    icon: '☀'
+  },
+  {
+    title: 'Flooring & Backsplash',
+    desc: 'Tile, hardwood, LVP, and natural stone with beautiful backsplash designs.',
+    icon: '⚑'
+  },
+  {
+    title: 'Plumbing & Fixtures',
+    desc: 'Sink installation, faucet upgrades, garbage disposal, dishwasher hookups.',
+    icon: '⎙'
+  }
+];
+
+const kitchenAreas = [
+  'Denver', 'Colorado Springs', 'Aurora', 'Fort Collins', 'Boulder',
+  'Castle Rock', 'Lakewood', 'Arvada', 'Thornton', 'Westminster',
+  'Centennial', 'Highlands Ranch', 'Littleton', 'Longmont', 'Broomfield',
+  'Parker', 'Commerce City', 'Pueblo', 'Greeley', 'Loveland'
+];
+
+const kitchenKeywords = [
+  { term: 'Kitchen remodeling near me', place: 'Denver Metro' },
+  { term: 'Best kitchen contractor near me', place: 'Colorado' },
+  { term: 'Kitchen renovation near me', place: 'Aurora, CO' },
+  { term: 'Kitchen remodel Denver', place: 'Custom designs' },
+  { term: 'Kitchen cabinets near me', place: 'Colorado Springs' },
+  { term: 'Kitchen countertops near me', place: 'Fort Collins' },
+  { term: 'Affordable kitchen remodel', place: 'Boulder, CO' },
+  { term: 'Open concept kitchen remodel', place: 'Castle Rock' },
+  { term: 'Modern kitchen design near me', place: 'Lakewood' },
+  { term: 'Kitchen island installation', place: 'Arvada, CO' },
+  { term: 'Kitchen flooring contractor', place: 'Thornton, CO' },
+  { term: 'Kitchen backsplash installation', place: 'Westminster' },
+  { term: 'Luxury kitchen renovation', place: 'Highlands Ranch' },
+  { term: 'Kitchen lighting design', place: 'Centennial, CO' },
+  { term: 'Kitchen remodeling company', place: 'Littleton, CO' },
+  { term: 'Custom kitchen cabinets', place: 'Longmont, CO' },
+  { term: 'Kitchen sink installation near me', place: 'Broomfield' },
+  { term: 'Kitchen renovation contractor', place: 'Parker, CO' }
+];
+
+const formPoints = [
+  'Free in-home consultation & 3D design',
+  'Transparent pricing — no hidden fees',
+  'Flexible financing options available',
+  '$500 off or FREE refrigerator — ask us!'
+];
+
 export default function KitchenRemodeling() {
-  const partnerRef = useRef(null);
-  const { scrollYProgress: partnerScroll } = useScroll({
-    target: partnerRef,
-    offset: ['start end', 'end start']
-  });
-  const yPartnerImage = useTransform(partnerScroll, [0, 1], [50, -50]);
-  const trustPoints = [
-    {
-      title: 'Licensed & Insured',
-      desc: 'Full coverage on every project',
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 512 512" fill="currentColor">
-          <path d="M224,192a16,16,0,1,0,16,16A16,16,0,0,0,224,192ZM466.5,83.68l-192-80A57.4,57.4,0,0,0,256.05,0a57.4,57.4,0,0,0-18.46,3.67l-192,80A47.93,47.93,0,0,0,16,128C16,326.5,130.5,463.72,237.5,508.32a48.09,48.09,0,0,0,36.91,0C360.09,472.61,496,349.3,496,128A48,48,0,0,0,466.5,83.68ZM384,256H371.88c-28.51,0-42.79,34.47-22.63,54.63l8.58,8.57a16,16,0,1,1-22.63,22.63l-8.57-8.58C306.47,313.09,272,327.37,272,355.88V368a16,16,0,0,1-32,0V355.88c0-28.51-34.47-42.79-54.63-22.63l-8.57,8.58a16,16,0,0,1-22.63-22.63l8.58-8.57c20.16-20.16,5.88-54.63-22.63-54.63H128a16,16,0,0,1,0-32h12.12c28.51,0,42.79-34.47,22.63-54.63l-8.58-8.57a16,16,0,0,1,22.63-22.63l8.57,8.58c20.16,20.16,54.63,5.88,54.63-22.63V112a16,16,0,0,1,32,0v12.12c0,28.51,34.47,42.79,54.63,22.63l8.57-8.58a16,16,0,0,1,22.63,22.63l-8.58,8.57C329.09,189.53,343.37,224,371.88,224H384a16,16,0,0,1,0,32Zm-96,0a16,16,0,1,0,16,16A16,16,0,0,0,288,256Z" />
-        </svg>
-      ),
-    },
-    {
-      title: 'On-Time Delivery',
-      desc: 'Projects completed on schedule',
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 512 512" fill="currentColor">
-          <path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z" />
-        </svg>
-      ),
-    },
-    {
-      title: 'Honest Pricing',
-      desc: 'No hidden fees or surprises',
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 288 512" fill="currentColor">
-          <path d="M209.2 233.4l-108-31.6C88.7 198.2 80 186.5 80 173.5c0-16.3 13.2-29.5 29.5-29.5h66.3c12.2 0 24.2 3.7 34.2 10.5 6.1 4.1 14.3 3.1 19.5-2l34.8-34c7.1-6.9 6.1-18.4-1.8-24.5C238 74.8 207.4 64.1 176 64V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48h-2.5C45.8 64-5.4 118.7.5 183.6c4.2 46.1 39.4 83.6 83.8 96.6l102.5 30c12.5 3.7 21.2 15.3 21.2 28.3 0 16.3-13.2 29.5-29.5 29.5h-66.3C100 368 88 364.3 78 357.5c-6.1-4.1-14.3-3.1-19.5 2l-34.8 34c-7.1 6.9-6.1 18.4 1.8 24.5 24.5 19.2 55.1 29.9 86.5 30v48c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16v-48.2c46.6-.9 90.3-28.6 105.7-72.7 21.5-61.6-14.6-124.8-72.5-141.7z" />
-        </svg>
-      ),
-    },
-    {
-      title: '5-Star Reviews',
-      desc: 'Trusted by Denver homeowners',
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 576 512" fill="currentColor">
-          <path d="M528.1 171.5L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6zM388.6 312.3l23.7 138.4L288 385.4l-124.3 65.3 23.7-138.4-100.6-98 139-20.2 62.2-126 62.2 126 139 20.2-100.6 98z" />
-        </svg>
-      ),
-    },
-  ];
-
-  const serviceColumns = [
-    {
-      icon: '/assets/images/kitchen.png',
-      title: 'Cabinet & Hardware Installation',
-      desc: 'Upgrade storage space and improve layout functionality with modern cabinet solutions.',
-    },
-    {
-      icon: '/assets/images/kitchen-1.png',
-      title: 'Countertops & Backsplash Installation',
-      desc: 'Choose from stylish materials that improve durability and visual appeal.',
-    },
-    {
-      icon: '/assets/images/countertop.png',
-      title: 'Lighting & Layout Improvements',
-      desc: 'Enhance brightness, workflow, and comfort with optimized kitchen design upgrades.',
-    },
-  ];
-
-  const serviceLocations = [
-    'Aurora', 'Arvada', 'Broomfield', 'Brighton', 'Boulder',
-    'Centennial', 'Denver', 'Englewood', 'Lakewood', 'Parker',
-    'Thornton', 'Westminster', 'Wheat ridge',
-  ];
+  // LeadConnector's script resizes the embedded form to fit its fields
+  useEffect(() => {
+    if (document.querySelector(`script[src="${FORM_SCRIPT}"]`)) return;
+    const script = document.createElement('script');
+    script.src = FORM_SCRIPT;
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
 
   return (
     <>
       <Helmet>
-        <title>Expert Kitchen Remodel Contractor | Custom Designs By JRC</title>
+        <title>Kitchen Remodeling Denver | Custom Kitchen Renovation | JRC</title>
         <meta
           name="description"
-          content="Denver kitchen remodeling by JRC: Custom kitchen designs and expert craftsmanship. Get a free estimate for your kitchen renovation!"
+          content="Colorado's trusted kitchen remodeling experts. Custom designs, quality craftsmanship, on time and on budget. $500 off or a free refrigerator with a complete renovation."
         />
         <link rel="canonical" href="https://jrchomeremodeling.com/kitchen-remodeling/" />
       </Helmet>
 
       <article className="kitchen-page">
-        {/* =========================================================================
-            SECTION 0: Hero with Side Form
-            ========================================================================= */}
-        <section id="form" className="kitchen-hero-section">
-          <div className="kitchen-content-container">
-            <div className="kitchen-hero-grid">
-              <div className="kitchen-hero-left">
-                <div className="kitchen-tag-pill">
-                  <span>KITCHEN REMODELER</span>
-                </div>
-                <h2 className="kitchen-hero-title">
-                  Kitchen Remodeling Services in Denver Metro
-                </h2>
-                <p className="kitchen-hero-desc">
-                  From cabinets and countertops to lighting and full layout upgrades — JRC Home Remodeling delivers beautiful kitchens designed around your lifestyle and budget.
-                </p>
-                <div className="kitchen-hero-cta-group">
-                  <a href="#transform" className="btn-kitchen-orange">
-                    See transformation
-                  </a>
-                  <a href={`tel:${COMPANY.phoneRaw}`} className="btn-kitchen-navy">
-                    Call {COMPANY.phone}
-                  </a>
-                </div>
-              </div>
-
-              {/* Consultation Request Form on Right */}
-              <div className="kitchen-hero-form-card">
-                <EstimateForm
-                  serviceName="Kitchen Remodeling"
-                  title=""
-                  subtitle=""
-                  buttonText="Send Message"
-                />
-              </div>
-            </div>
+        {/* ==========================================
+            SECTION 1: HERO
+           ========================================== */}
+        <section className="kit-hero">
+          <div className="kit-hero-media" aria-hidden="true">
+            <img src="/assets/images/kitchen-hero-bg.png" alt="" />
           </div>
-        </section>
 
-        {/* =========================================================================
-            SECTION 1: Blue Trust Bar
-            ========================================================================= */}
-        <section className="kitchen-trust-bar">
-          <div className="kitchen-content-container">
-            <div className="kitchen-trust-grid">
-              {trustPoints.map((tp) => (
-                <div key={tp.title} className="kitchen-trust-item">
-                  <div className="kitchen-trust-icon-circle">{tp.icon}</div>
-                  <h3 className="kitchen-trust-title">{tp.title}</h3>
-                  <p className="kitchen-trust-desc">{tp.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+          <div className="kit-container kit-hero-inner">
+            <span className="kit-eyebrow kit-eyebrow-orange">
+              Dream It &middot; Design It &middot; Live It
+            </span>
 
-        {/* =========================================================================
-            SECTION 2: Before & After Transformation + 4 Thumbnails + Button
-            ========================================================================= */}
-        <section id="transform" className="kitchen-transform-section">
-          <div className="kitchen-content-container text-center">
-            <div className="kitchen-tag-pill" style={{ display: 'inline-block', marginBottom: '14px' }}>
-              <span>KITCHEN REMODELER</span>
-            </div>
-            <h2 className="kitchen-section-title">
-              Turn Your Outdated Kitchen Into a Space You Love Every Day
-            </h2>
-            <p className="kitchen-transform-desc">
-              Whether your kitchen feels cramped, outdated, or lacks functionality, our remodeling team helps you redesign the space with better layout flow, upgraded materials, and modern finishes that increase comfort and home value.
+            <h1 className="kit-hero-title">
+              Kitchen Remodeling
+              <span className="kit-hero-accent">Done Right.</span>
+            </h1>
+
+            <p className="kit-hero-sub">
+              Beautiful kitchens. Quality craftsmanship. Designed around your life.
+              Colorado&rsquo;s trusted kitchen remodeling experts.
             </p>
 
-            <div className="kitchen-transform-slider-wrap">
-              <BeforeAfterSlider
-                beforeImage="/assets/images/vintage-kitchen-design-tips.jpg"
-                afterImage="/assets/images/Gemini_Generated_Image_335e07335e07335e-scaled.jpg"
-                beforeAlt="Outdated dark wooden kitchen"
-                afterAlt="Modern bright open kitchen renovation"
-                height="800px"
-                initialPosition={56}
-              />
-            </div>
+            <ul className="kit-hero-chips">
+              {heroChips.map((chip) => (
+                <li key={chip}>{chip}</li>
+              ))}
+            </ul>
 
-            {/* 4 Thumbnails in a row */}
-            <div className="kitchen-thumbnails-grid">
-              <div className="kitchen-thumbnail-item">
-                <img src="/assets/images/image-3-1.jpeg" alt="Kitchen detail 1" loading="lazy" />
-              </div>
-              <div className="kitchen-thumbnail-item">
-                <img src="/assets/images/image-2.webp" alt="Kitchen detail 2" loading="lazy" />
-              </div>
-              <div className="kitchen-thumbnail-item">
-                <img src="/assets/images/image.jpeg" alt="Kitchen detail 3" loading="lazy" />
-              </div>
-              <div className="kitchen-thumbnail-item">
-                <img src="/assets/images/image-5-e1774993852182.jpeg" alt="Kitchen detail 4" loading="lazy" />
-              </div>
-            </div>
-
-            <div className="kitchen-estimate-btn-wrap">
-              <a href="#form" className="btn-kitchen-orange btn-lg">
-                Get My Kitchen Estimate
+            <div className="kit-hero-cta">
+              <a href="#estimate-form" className="kit-btn kit-btn-primary">
+                Get Your Free Quote <span aria-hidden="true">&rarr;</span>
+              </a>
+              <a href="#transformations" className="kit-btn kit-btn-white">
+                See Our Work
               </a>
             </div>
           </div>
         </section>
 
-        {/* =========================================================================
-            SECTION 3: Local Partner & Checklist
-            ========================================================================= */}
-        <section className="kitchen-partner-section">
-          <div className="kitchen-content-container">
-            <div className="kitchen-partner-grid">
-              <div className="kitchen-partner-content">
-                <h2 className="kitchen-section-title" style={{ textAlign: 'left', marginBottom: '18px' }}>
-                  Your Local Kitchen Remodeling Partner in Denver Metro
-                </h2>
-                <p className="kitchen-partner-desc">
-                  At JRC Home Remodeling, we help homeowners create kitchens that combine beauty, efficiency, and long-lasting quality. From the first consultation to final installation, our team manages every detail including cabinetry upgrades, backsplash installation, lighting improvements, and countertop refinishing so your remodeling experience stays smooth and stress-free.
-                </p>
-                <ul className="kitchen-checklist">
-                  <li>
-                    <span className="kitchen-check-icon">✓</span>
-                    <span>25+ years remodeling experience</span>
-                  </li>
-                  <li>
-                    <span className="kitchen-check-icon">✓</span>
-                    <span>Fully insured professionals</span>
-                  </li>
-                  <li>
-                    <span className="kitchen-check-icon">✓</span>
-                    <span>Dust-controlled remodeling environment</span>
-                  </li>
-                  <li>
-                    <span className="kitchen-check-icon">✓</span>
-                    <span>Clear timelines and communication</span>
-                  </li>
-                </ul>
-                <a href={`tel:${COMPANY.phoneRaw}`} className="btn-kitchen-orange">
-                  Talk With a Remodeling Expert
-                </a>
-              </div>
-              <div className="kitchen-partner-image-box" />
+        {/* ==========================================
+            SECTION 2: TRUST BAR
+           ========================================== */}
+        <section className="kit-trust">
+          <ul className="kit-container kit-trust-list">
+            {trustBar.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+
+        {/* ==========================================
+            SECTION 3: BEFORE / AFTER SLIDER
+           ========================================== */}
+        <section id="transformations" className="kit-sec">
+          <div className="kit-container">
+            <div className="kit-head">
+              <span className="kit-eyebrow">Our Transformations</span>
+              <h2 className="kit-title">
+                See the <span className="kit-accent">Before &amp; After</span>
+              </h2>
+              <p className="kit-sub">
+                Drag the slider to reveal the transformation. Real work from a JRC Home
+                Remodeling project in Colorado.
+              </p>
+            </div>
+
+            <div className="kit-ba">
+              <BeforeAfterSlider
+                beforeImage="/assets/images/kitchen-ba-before.jpg"
+                afterImage="/assets/images/kitchen-ba-after.jpg"
+                beforeAlt="Dated oak kitchen before the JRC remodel"
+                afterAlt="Finished kitchen with white cabinetry and gold pendant lighting"
+                height="clamp(300px, 52vh, 560px)"
+                borderRadius="14px"
+              />
             </div>
           </div>
         </section>
 
-        {/* =========================================================================
-            SECTION 4: Complete Kitchen Remodeling Services (Dark Navy #1E3A5F)
-            ========================================================================= */}
-        <section className="kitchen-services-section">
-          <div className="kitchen-content-container">
-            <div className="kitchen-services-header text-center">
-              <div className="kitchen-tag-pill kitchen-tag-pill-dark" style={{ display: 'inline-block', marginBottom: '14px' }}>
-                <span>KITCHEN REMODELING</span>
-              </div>
-              <h2 className="kitchen-services-title">
-                Complete Kitchen Remodeling Services <br />From Start to Finish
+        {/* ==========================================
+            SECTION 4: VIDEOS
+           ========================================== */}
+        <section className="kit-sec kit-sec-cream">
+          <div className="kit-container">
+            <div className="kit-head">
+              <span className="kit-eyebrow">Watch Us Work</span>
+              <h2 className="kit-title">
+                Kitchen Remodeling <span className="kit-accent">In Action</span>
               </h2>
-              <p className="kitchen-services-subtitle">
-                Phoenix’s trusted bathroom remodeling experts. Custom designs, quality craftsmanship, and <br />exceptional service — all backed by our satisfaction guarantee.
+              <p className="kit-sub">
+                See our Colorado team in action &mdash; from demolition to the final reveal.
               </p>
             </div>
 
-            <div className="kitchen-services-grid">
-              {serviceColumns.map((srv) => (
-                <div key={srv.title} className="kitchen-service-box">
-                  <div className="kitchen-service-icon-wrap">
-                    <img src={srv.icon} alt={srv.title} />
+            <div className="kit-videos">
+              {kitchenVideos.map((clip) => (
+                <div className="kit-video-card" key={clip.key}>
+                  <div
+                    className={`kit-video-frame ${
+                      clip.kind === 'youtube' ? 'kit-video-wide' : 'kit-video-tall'
+                    }`}
+                  >
+                    <iframe
+                      title={clip.title}
+                      src={
+                        clip.kind === 'vimeo'
+                          ? `https://player.vimeo.com/video/${clip.id}?h=${clip.hash}`
+                          : `https://www.youtube.com/embed/${clip.id}`
+                      }
+                      loading="lazy"
+                      referrerPolicy="strict-origin-when-cross-origin"
+                      allow="accelerometer; autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; gyroscope; web-share"
+                      allowFullScreen
+                    />
                   </div>
-                  <h3 className="kitchen-service-title">{srv.title}</h3>
-                  <p className="kitchen-service-desc">{srv.desc}</p>
+
+                  <div className="kit-video-copy">
+                    <h3 className="kit-video-title">{clip.title}</h3>
+                    <p className="kit-video-caption">{clip.caption}</p>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* =========================================================================
-            SECTION 5: 3D Visualization Banner
-            ========================================================================= */}
-        <section className="kitchen-visualize-section">
-          <div className="kitchen-visualize-overlay" />
-          <div className="kitchen-content-container text-center kitchen-visualize-inner">
-            <h1 className="kitchen-visualize-title">
-              Visualize Your New Kitchen Before Construction Begins
-            </h1>
-            <p className="kitchen-visualize-desc">
-              We create detailed 3D remodeling previews so you can confidently approve layouts, materials, <br />and finishes before installation begins — eliminating surprises during construction.
-            </p>
+        {/* ==========================================
+            SECTION 5: SERVICES
+           ========================================== */}
+        <section className="kit-sec kit-sec-dark">
+          <div className="kit-container">
+            <div className="kit-head">
+              <h2 className="kit-title kit-title-light">
+                Complete Kitchen <span className="kit-accent">Remodeling Services</span>
+              </h2>
+              <p className="kit-sub kit-sub-light">
+                From custom cabinets to complete gut renovations, we handle every detail.
+              </p>
+            </div>
+
+            <div className="kit-services">
+              {kitchenServices.map((item) => (
+                <div className="kit-service" key={item.title}>
+                  <span className="kit-service-icon" aria-hidden="true">{item.icon}</span>
+                  <h3 className="kit-service-title">{item.title}</h3>
+                  <p className="kit-service-desc">{item.desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
-        {/* =========================================================================
-            SECTION 6: 3-Step Working Process (Stepped Cards + Image)
-            ========================================================================= */}
-        <section className="kitchen-process-section">
-          <div className="kitchen-content-container">
-            <div className="kitchen-process-header text-center">
-              <h2 className="kitchen-section-title">
-                Our Simple 3-Step <br />Kitchen Remodeling Process
+        {/* ==========================================
+            SECTION 6: OFFERS
+           ========================================== */}
+        <section className="kit-sec">
+          <div className="kit-container">
+            <div className="kit-head kit-head-center">
+              <span className="kit-eyebrow">Limited Time Offer</span>
+              <h2 className="kit-title">
+                <span className="kit-accent">Exclusive Savings</span> on Your Kitchen Remodel
               </h2>
             </div>
 
-            <div className="kitchen-process-row">
-              {/* Card 1: Step 1 (margin-top 150px) */}
-              <div className="kitchen-process-step-card step-card-1">
-                <h2 className="kitchen-step-number">Step 1</h2>
-                <h2 className="kitchen-step-name">Consultation</h2>
-                <p className="kitchen-step-text">
-                  We understand your goals, layout needs, and budget expectations.
-                </p>
+            <div className="kit-offers">
+              <div className="kit-offer kit-offer-orange">
+                <span className="kit-offer-pill">Limited Time</span>
+                <strong className="kit-offer-amount">$500 OFF</strong>
+                <span className="kit-offer-for">Your Kitchen Remodel</span>
+                <span className="kit-offer-terms">
+                  Projects over $10,000 &middot; Cannot combine offers
+                </span>
               </div>
 
-              {/* Card 2: Step 2 (margin-top 100px) */}
-              <div className="kitchen-process-step-card step-card-2">
-                <h2 className="kitchen-step-number">Step 2</h2>
-                <h2 className="kitchen-step-name">Design Planning</h2>
-                <p className="kitchen-step-text">
-                  We create visualization models and finalize materials and finishes.
-                </p>
-              </div>
+              <span className="kit-offer-or">or</span>
 
-              {/* Card 3: Step 3 (margin-top 50px) */}
-              <div className="kitchen-process-step-card step-card-3">
-                <h2 className="kitchen-step-number">Step 3</h2>
-                <h2 className="kitchen-step-name">Professional Installation</h2>
-                <p className="kitchen-step-text">
-                  Our team completes demolition, upgrades, and finishing with precision.
-                </p>
+              <div className="kit-offer kit-offer-blue">
+                <span className="kit-offer-pill kit-offer-pill-blue">Bonus Offer</span>
+                <strong className="kit-offer-amount kit-offer-amount-blue">
+                  FREE Refrigerator
+                </strong>
+                <span className="kit-offer-for">With Complete Renovation</span>
+                <span className="kit-offer-terms">
+                  Select models &middot; Mention at consultation
+                </span>
               </div>
+            </div>
 
-              {/* Card 4: Step Image (margin-top 0) */}
-              <div className="kitchen-process-step-image" />
+            <div className="kit-offers-cta">
+              <a href="#estimate-form" className="kit-btn kit-btn-primary kit-btn-pill">
+                Claim Your Offer Now <span aria-hidden="true">&rarr;</span>
+              </a>
             </div>
           </div>
         </section>
 
-        {/* =========================================================================
-            SECTION 7: Testimonials & Trust (Dark Navy #1E3A5F)
-            ========================================================================= */}
-        <section className="kitchen-reviews-section">
-          <div className="kitchen-content-container">
-            <div className="kitchen-reviews-header text-center">
-              <div className="kitchen-tag-pill kitchen-tag-pill-dark" style={{ display: 'inline-block', marginBottom: '10px' }}>
-                <span>Latest Project</span>
-              </div>
-              <h2 className="kitchen-reviews-title">
-                What Our Clients Say About Our Painting Company
+        {/* ==========================================
+            SECTION 7: SERVICE AREAS
+           ========================================== */}
+        <section className="kit-sec kit-sec-dark">
+          <div className="kit-container">
+            <div className="kit-head">
+              <span className="kit-eyebrow kit-eyebrow-orange">Serving All Of Colorado</span>
+              <h2 className="kit-title kit-title-light">
+                Kitchen Remodeling <span className="kit-accent">Near You</span>
               </h2>
+              <p className="kit-sub kit-sub-light">
+                JRC Home Remodeling proudly serves homeowners across the Front Range and beyond.
+              </p>
             </div>
 
-            <div className="kitchen-reviews-grid">
-              {/* Left Column: Image with gradient overlay and bottom trust stat */}
-              <div className="kitchen-reviews-image-box">
-                <div className="kitchen-reviews-trust-stat">
-                  <div className="kitchen-avatars-row">
-                    <img src="/assets/images/user9.jpg" alt="Client 1" className="kitchen-avatar-circle avatar-1" />
-                    <img src="/assets/images/user8.jpg" alt="Client 2" className="kitchen-avatar-circle avatar-2" />
-                    <img src="/assets/images/user7.jpg" alt="Client 3" className="kitchen-avatar-circle avatar-3" />
-                  </div>
-                  <h2 className="kitchen-trust-stat-title">
-                    Trusted By <span className="kitchen-orange-text">1000+</span><br /> Satisfied Customers
-                  </h2>
-                </div>
-              </div>
-
-              {/* Right Column: 3D Rectangular Cube Rotating Testimonial Slider */}
-              <div className="kitchen-reviews-card-box">
-                <C3DRectangularCubeSlider />
-              </div>
-            </div>
+            <ul className="kit-areas">
+              {kitchenAreas.map((city) => (
+                <li className="kit-area" key={city}>
+                  <span aria-hidden="true">&#128205;</span> {city}
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 
-        {/* =========================================================================
-            SECTION 8: Bottom Location & Estimate Form (#101828)
-            ========================================================================= */}
-        <section className="kitchen-bottom-section">
-          <div className="kitchen-content-container">
-            <div className="kitchen-bottom-grid">
-              <div className="kitchen-bottom-left">
-                <div className="kitchen-tag-pill kitchen-tag-pill-dark" style={{ display: 'inline-block', marginBottom: '14px' }}>
-                  <span>Kitchen remodeller Near me</span>
-                </div>
-                <h2 className="kitchen-bottom-title">
-                  Kitchen Remodeling Services Near You
-                </h2>
-                <p className="kitchen-bottom-desc">
-                  If you’re searching for a <strong>Kitchen renovation near me</strong> or planning a <strong>Kitchen remodel near me</strong>, <strong>JRC Home Remodeling</strong> is the team you can trust to bring your vision to life. As an experienced <strong>Kitchen contractor</strong>, we specialize in creating beautiful, functional spaces that fit your style and budget. We make getting started easy by offering a <strong>free design</strong> and <strong>free estimate</strong>, so you can clearly see your options and costs upfront.
-                </p>
-                <h2 className="kitchen-bottom-subheading">
-                  serving homeowner across denver
-                </h2>
-                <div className="kitchen-location-pills">
-                  {serviceLocations.map((loc) => (
-                    <span key={loc} className="kitchen-location-pill">
-                      {loc}
-                    </span>
-                  ))}
-                </div>
-              </div>
+        {/* ==========================================
+            SECTION 8: SEARCH TERMS
+           ========================================== */}
+        <section className="kit-sec kit-sec-cream">
+          <div className="kit-container">
+            <div className="kit-head">
+              <span className="kit-eyebrow">Find Us When You Search</span>
+              <h2 className="kit-title">
+                Kitchen Remodeling <span className="kit-accent">Near Me</span> in Colorado
+              </h2>
+              <p className="kit-sub">
+                Wherever you are in Colorado, JRC Home Remodeling is just a call away.
+              </p>
+            </div>
 
-              <div className="kitchen-bottom-right">
-                <div className="kitchen-bottom-form-card">
-                  <h2 className="kitchen-bottom-form-title">
-                    Get Your Free Estimate
-                  </h2>
-                  <EstimateForm
-                    serviceName="Kitchen Remodeling"
-                    title=""
-                    subtitle=""
-                    buttonText="Send"
-                  />
-                </div>
-              </div>
+            <ul className="kit-keywords">
+              {kitchenKeywords.map((row) => (
+                <li key={row.term}>
+                  <strong>{row.term}</strong>
+                  <span>&mdash; {row.place}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* ==========================================
+            SECTION 9: QUOTE FORM
+           ========================================== */}
+        <section id="estimate-form" className="kit-sec">
+          <div className="kit-container kit-form-grid">
+            <div className="kit-form-left">
+              <span className="kit-eyebrow">Get Started Today</span>
+              <h2 className="kit-title">
+                Request Your <span className="kit-accent">Free Quote</span>
+              </h2>
+              <p className="kit-sub">
+                Fill out the form and one of our kitchen remodeling specialists will be in
+                touch within 24 hours. No pressure, no obligation &mdash; just expert advice
+                for your dream kitchen.
+              </p>
+
+              <ul className="kit-form-points">
+                {formPoints.map((point) => (
+                  <li key={point}>
+                    <span className="kit-form-check" aria-hidden="true">&#10003;</span>
+                    {point}
+                  </li>
+                ))}
+              </ul>
+
+              <p className="kit-form-call">
+                Prefer to talk? Call{' '}
+                <a href={`tel:${COMPANY.phoneRaw}`}>{COMPANY.phone}</a>
+              </p>
+            </div>
+
+            <div className="kit-form-right">
+              <iframe
+                src={FORM_SRC}
+                id={`inline-${FORM_ID}`}
+                title="Request Your Free Quote"
+                className="kit-form-embed"
+                scrolling="no"
+                data-layout='{"id":"INLINE"}'
+                data-trigger-type="alwaysShow"
+                data-activation-type="alwaysActivated"
+                data-deactivation-type="neverDeactivate"
+                data-form-name="Kitchen Remodeling Quote"
+                data-form-id={FORM_ID}
+                data-layout-iframe-id={`inline-${FORM_ID}`}
+                data-height="1150"
+              />
             </div>
           </div>
         </section>

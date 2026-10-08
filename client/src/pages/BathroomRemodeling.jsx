@@ -1,9 +1,12 @@
+import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import EstimateForm from '../components/forms/EstimateForm';
 import { COMPANY } from '../content/siteData';
 import '../styles/bathroom.css';
 
 const OFFER = '$1,000';
+const FORM_ID = 'v8yeCev0amqIMAJD1CZW';
+const FORM_SRC = `https://api.leadconnectorhq.com/widget/form/${FORM_ID}`;
+const FORM_SCRIPT = 'https://link.msgsndr.com/js/form_embed.js';
 
 const bathroomStats = [
   { value: '25+', label: 'Years In Business' },
@@ -119,6 +122,15 @@ const bathroomPromises = [
 ];
 
 export default function BathroomRemodeling() {
+  // LeadConnector's script sizes the iframe to its content as fields expand
+  useEffect(() => {
+    if (document.querySelector(`script[src="${FORM_SCRIPT}"]`)) return;
+    const script = document.createElement('script');
+    script.src = FORM_SCRIPT;
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
+
   return (
     <>
       <Helmet>
@@ -136,7 +148,7 @@ export default function BathroomRemodeling() {
            ========================================== */}
         <section className="bath-hero">
           <div className="bath-hero-media" aria-hidden="true">
-            <img src="/assets/images/05_Main_Bathroom_IMG_1171-Copy-scaled-1.jpg" alt="" />
+            <img src="/assets/images/bath-hero-bg.webp" alt="" />
           </div>
 
           <div className="bath-container bath-hero-inner">
@@ -493,12 +505,27 @@ export default function BathroomRemodeling() {
             </div>
 
             <div className="bath-book-right">
-              <EstimateForm
-                serviceName="Bathroom Remodeling"
+              <div className="bath-form-head">
+                <h3 className="bath-form-title">Get Your Free Estimate</h3>
+                <p className="bath-form-sub">
+                  Fill out the form and we will call you within 24 hours
+                </p>
+              </div>
+
+              <iframe
+                src={FORM_SRC}
+                id={`inline-${FORM_ID}`}
                 title="Get Your Free Estimate"
-                subtitle="Fill out the form and we will call you within 24 hours"
-                buttonText={`Claim My ${OFFER} Off`}
-                showSms={true}
+                className="bath-form-embed"
+                scrolling="no"
+                data-layout='{"id":"INLINE"}'
+                data-trigger-type="alwaysShow"
+                data-activation-type="alwaysActivated"
+                data-deactivation-type="neverDeactivate"
+                data-form-name="Bathroom Remodeling Estimate"
+                data-form-id={FORM_ID}
+                data-layout-iframe-id={`inline-${FORM_ID}`}
+                data-height="1150"
               />
             </div>
           </div>
