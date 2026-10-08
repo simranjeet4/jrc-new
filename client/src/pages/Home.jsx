@@ -1,8 +1,9 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import C3DRectangularCubeSlider from '../components/about/C3DRectangularCubeSlider';
 import BeforeAfterSlider from '../components/common/BeforeAfterSlider';
+import useParallaxImages from '../hooks/useParallaxImages';
 import '../styles/home.css';
 
 const servicesStackList = [
@@ -20,6 +21,59 @@ const servicesStackList = [
   { name: 'Floor Installers', path: '/floor-installers' },
   { name: 'Roof Repair', path: '/roof-repair' },
   { name: 'Fast Countertop Services By JRC Countertops', path: '/countertop-services-near-me' }
+];
+
+const sec6WhyFeatures = [
+  {
+    title: 'Residential Renovation',
+    desc: 'Residential renovation is transformative process that breathes new life into home enhancing both its functionality and aesthetic appeal single room',
+    icon: '/assets/images/sec6-icon-residential-renovation.png'
+  },
+  {
+    title: 'Design & Planning',
+    desc: 'Design & Planning is the foundation of any successful renovation or construction project It involves turning ideas into practical well structured solutions',
+    icon: '/assets/images/sec6-icon-design-planning.png'
+  },
+  {
+    title: 'Turnkey Renovation',
+    desc: 'Turnkey renovation offers a complete hassle free solution for transforming space from start to finish from initial design and planning to final execution',
+    icon: '/assets/images/sec6-icon-turnkey-renovation.png'
+  }
+];
+
+const sec3AccordionItems = [
+  {
+    id: 'mission',
+    title: 'Our Mission',
+    body: 'Our mission is to provide high-quality kitchen, bathroom, basement, and full-home remodeling services through expert craftsmanship, transparent communication, and complete project management from start to finish.'
+  },
+  {
+    id: 'vision',
+    title: 'Our Vision',
+    body: 'To become Colorado\u2019s most trusted home remodeling partner by transforming houses into comfortable, functional, and beautiful living spaces that families enjoy for years to come. We aim to deliver remodeling experiences that are as reliable and stress-free as the results themselves.'
+  },
+  {
+    id: 'value',
+    title: 'Our Value',
+    body: 'To become Colorado\u2019s most trusted home remodeling partner by transforming houses into comfortable, functional, and beautiful living spaces that families enjoy for years to come. We aim to deliver remodeling experiences that are as reliable and stress-free as the results themselves.'
+  }
+];
+
+const homeShowcaseVideos = [
+  {
+    id: 'walkthrough',
+    title: 'Project Walkthrough',
+    caption: 'A completed JRC remodel, start to finish.',
+    src: '/assets/videos/jrc-project-walkthrough.mp4',
+    length: '0:40'
+  },
+  {
+    id: 'highlights',
+    title: 'Project Highlights',
+    caption: 'A closer look at the detail and craftsmanship.',
+    src: '/assets/videos/jrc-project-highlights.mp4',
+    length: '0:25'
+  }
 ];
 
 const featureTabServices = [
@@ -102,26 +156,27 @@ const featureTabServices = [
 export default function Home() {
   const [activeTab, setActiveTab] = useState('kitchen-remodel');
   const [openSec3Accordion, setOpenSec3Accordion] = useState('mission');
-  const [sec3Parallax, setSec3Parallax] = useState(0);
-  const sec3ImgCardRef = useRef(null);
+  const pageRef = useRef(null);
+  const [playingVideo, setPlayingVideo] = useState(null);
+  const videoRefs = useRef({});
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!sec3ImgCardRef.current) return;
-      const rect = sec3ImgCardRef.current.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-      if (rect.top < windowHeight && rect.bottom > 0) {
-        const centerOffset = (rect.top + rect.height / 2) - (windowHeight / 2);
-        const maxParallax = 40;
-        const normalized = centerOffset / (windowHeight / 2);
-        const clamped = Math.max(-1, Math.min(1, normalized));
-        setSec3Parallax(clamped * maxParallax);
+  // Only one clip runs at a time — starting one stops the other
+  const handleVideoPlay = (id, startPlayback = false) => {
+    Object.entries(videoRefs.current).forEach(([key, el]) => {
+      if (el && key !== id) el.pause();
+    });
+    setPlayingVideo(id);
+    if (startPlayback) {
+      const el = videoRefs.current[id];
+      if (el) {
+        const started = el.play();
+        if (started && typeof started.catch === 'function') started.catch(() => {});
       }
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    }
+  };
+
+  // Drift every content photo against the scroll direction
+  useParallaxImages(pageRef);
 
   const currentTabContent = featureTabServices.find((s) => s.id === activeTab) || featureTabServices[0];
 
@@ -133,7 +188,7 @@ export default function Home() {
         <link rel="canonical" href="https://jrchomeremodeling.com/" />
       </Helmet>
 
-      <article className="home-page-mockup">
+      <article className="home-page-mockup" ref={pageRef}>
         {/* ==========================================
             SECTION 1: HERO BANNER (SPLIT LAYOUT)
            ========================================== */}
@@ -280,15 +335,12 @@ export default function Home() {
 
             {/* Col 2: Center Image Card */}
             <div className="home-sec3-col2">
-              <div className="home-sec3-img-card" ref={sec3ImgCardRef}>
+              <div className="home-sec3-img-card">
                 <img
                   src="/assets/images/sec3-navy-kitchen.jpg"
                   alt="Welcome To JRC Home Remodeling"
                   className="home-sec3-img"
-                  style={{
-                    transform: `translateY(${sec3Parallax}px) scale(1.15)`,
-                    transition: 'transform 0.1s ease-out',
-                  }}
+                  data-parallax
                 />
               </div>
             </div>
@@ -296,65 +348,52 @@ export default function Home() {
             {/* Col 3: Accordion Menu (Mission, Vision, Value) */}
             <div className="home-sec3-col3">
               <div className="home-accordion-list">
-                {/* Accordion Item 1: Mission */}
-                <div className={`home-accordion-item ${openSec3Accordion === 'mission' ? 'is-open' : ''}`}>
-                  <div
-                    className="home-accordion-header"
-                    onClick={() => setOpenSec3Accordion(openSec3Accordion === 'mission' ? null : 'mission')}
-                  >
-                    <span className="home-accordion-title">Our Mission</span>
-                    <button type="button" className="home-accordion-toggle-btn" aria-label="Toggle Mission">
-                      {openSec3Accordion === 'mission' ? '−' : '+'}
-                    </button>
-                  </div>
-                  {openSec3Accordion === 'mission' && (
-                    <div className="home-accordion-body">
-                      <p>
-                        Our mission is to provide high-quality kitchen, bathroom, basement, and full-home remodeling services through expert craftsmanship, transparent communication, and complete project management from start to finish.
-                      </p>
-                    </div>
-                  )}
-                </div>
+                {sec3AccordionItems.map((item) => {
+                  const isOpen = openSec3Accordion === item.id;
+                  return (
+                    <div
+                      className={`home-accordion-item ${isOpen ? 'is-open' : ''}`}
+                      key={item.id}
+                    >
+                      <button
+                        type="button"
+                        className="home-accordion-header"
+                        aria-expanded={isOpen}
+                        aria-controls={`sec3-panel-${item.id}`}
+                        onClick={() => setOpenSec3Accordion(isOpen ? null : item.id)}
+                      >
+                        <span className="home-accordion-title">{item.title}</span>
+                        <span className="home-accordion-toggle-btn" aria-hidden="true">
+                          <svg
+                            className="home-accordion-chevron"
+                            viewBox="0 0 24 24"
+                            width="14"
+                            height="14"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <polyline points="6 9 12 15 18 9" />
+                          </svg>
+                        </span>
+                      </button>
 
-                {/* Accordion Item 2: Vision */}
-                <div className={`home-accordion-item ${openSec3Accordion === 'vision' ? 'is-open' : ''}`}>
-                  <div
-                    className="home-accordion-header"
-                    onClick={() => setOpenSec3Accordion(openSec3Accordion === 'vision' ? null : 'vision')}
-                  >
-                    <span className="home-accordion-title">Our Vision</span>
-                    <button type="button" className="home-accordion-toggle-btn" aria-label="Toggle Vision">
-                      {openSec3Accordion === 'vision' ? '−' : '+'}
-                    </button>
-                  </div>
-                  {openSec3Accordion === 'vision' && (
-                    <div className="home-accordion-body">
-                      <p>
-                        To become Colorado’s most trusted home remodeling partner by transforming houses into comfortable, functional, and beautiful living spaces that families enjoy for years to come. We aim to deliver remodeling experiences that are as reliable and stress-free as the results themselves.
-                      </p>
+                      {/* Always rendered so the open/close height can animate */}
+                      <div
+                        className="home-accordion-panel"
+                        id={`sec3-panel-${item.id}`}
+                      >
+                        <div className="home-accordion-panel-clip">
+                          <div className="home-accordion-body">
+                            <p>{item.body}</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  )}
-                </div>
-
-                {/* Accordion Item 3: Value */}
-                <div className={`home-accordion-item ${openSec3Accordion === 'value' ? 'is-open' : ''}`}>
-                  <div
-                    className="home-accordion-header"
-                    onClick={() => setOpenSec3Accordion(openSec3Accordion === 'value' ? null : 'value')}
-                  >
-                    <span className="home-accordion-title">Our Value</span>
-                    <button type="button" className="home-accordion-toggle-btn" aria-label="Toggle Value">
-                      {openSec3Accordion === 'value' ? '−' : '+'}
-                    </button>
-                  </div>
-                  {openSec3Accordion === 'value' && (
-                    <div className="home-accordion-body">
-                      <p>
-                        To become Colorado’s most trusted home remodeling partner by transforming houses into comfortable, functional, and beautiful living spaces that families enjoy for years to come. We aim to deliver remodeling experiences that are as reliable and stress-free as the results themselves.
-                      </p>
-                    </div>
-                  )}
-                </div>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -413,6 +452,7 @@ export default function Home() {
                     src={currentTabContent.image}
                     alt={currentTabContent.title}
                     className="home-card-img"
+                    data-parallax
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = '/assets/images/33190.jpg';
@@ -448,7 +488,7 @@ export default function Home() {
         <section className="home-sec6-why">
           <div className="hr-container">
             <div className="home-sec-header text-center">
-              <div className="home-pill-orange">WHY CHOOSE US</div>
+              <div className="home-pill-gray">LATEST PROJECT</div>
               <h2 className="home-sec-title">
                 Why Choose JRC Home Remodeling For Your Remodeling Services
               </h2>
@@ -457,42 +497,32 @@ export default function Home() {
             <div className="home-sec6-grid">
               {/* Left Column: 3 Feature Items */}
               <div className="home-sec6-left">
-                <div className="home-why-feature">
-                  <div className="home-why-icon">🎨</div>
-                  <div>
-                    <h3 className="home-why-feature-title">Quality Workmanship</h3>
-                    <p className="home-why-feature-desc">We use premium materials and precision techniques for long-lasting durability.</p>
+                {sec6WhyFeatures.map((feature) => (
+                  <div className="home-why-feature" key={feature.title}>
+                    <img
+                      src={feature.icon}
+                      alt=""
+                      aria-hidden="true"
+                      className="home-why-icon"
+                      loading="lazy"
+                    />
+                    <div className="home-why-feature-body">
+                      <h3 className="home-why-feature-title">{feature.title}</h3>
+                      <p className="home-why-feature-desc">{feature.desc}</p>
+                    </div>
                   </div>
-                </div>
-
-                <div className="home-why-feature">
-                  <div className="home-why-icon">📐</div>
-                  <div>
-                    <h3 className="home-why-feature-title">Range of Planning</h3>
-                    <p className="home-why-feature-desc">Comprehensive end-to-end planning with transparent scheduling & budgeting.</p>
-                  </div>
-                </div>
-
-                <div className="home-why-feature">
-                  <div className="home-why-icon">🏗️</div>
-                  <div>
-                    <h3 className="home-why-feature-title">Top-Tier Craftsmen</h3>
-                    <p className="home-why-feature-desc">Skilled in-house professionals dedicated to your satisfaction.</p>
-                  </div>
-                </div>
+                ))}
               </div>
 
-              {/* Right Column: Outdoor Living Photo Card */}
+              {/* Right Column: Why Choose Us Photo */}
               <div className="home-sec6-right">
                 <div className="home-why-img-card">
                   <img
-                    src="/assets/images/about-why-choose.jpg"
-                    alt="Why Choose JRC Home Remodeling"
+                    src="/assets/images/sec6-why-choose.jpg"
+                    alt="JRC Home Remodeling craftsman finishing a kitchen remodel opening onto an outdoor dining area"
                     className="home-why-img"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = '/assets/images/33190.jpg';
-                    }}
+                    data-parallax
+                    loading="lazy"
                   />
                 </div>
               </div>
@@ -518,6 +548,7 @@ export default function Home() {
                   src="/assets/images/photo-1756079664354-34944e001f6d.jpeg"
                   alt="Master Bedroom Remodel"
                   className="home-portfolio-img"
+                  data-parallax
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = '/assets/images/33190.jpg';
@@ -530,6 +561,7 @@ export default function Home() {
                   src="/assets/images/photo-1765745518752-68a289300789.jpeg"
                   alt="Modern Kitchen Island Remodel"
                   className="home-portfolio-img"
+                  data-parallax
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = '/assets/images/33190.jpg';
@@ -542,6 +574,7 @@ export default function Home() {
                   src="/assets/images/photo-1769253523308-f7bff35c60b1.jpeg"
                   alt="Bathroom Vanity Remodel"
                   className="home-portfolio-img"
+                  data-parallax
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = '/assets/images/33190.jpg';
@@ -553,7 +586,66 @@ export default function Home() {
         </section>
 
         {/* ==========================================
-            SECTION 8: TESTIMONIALS (DARK NAVY 3D CUBE)
+            SECTION 8: VIDEO SHOWCASE ("SEE THE WORK IN MOTION")
+           ========================================== */}
+        <section className="home-sec8-video">
+          <div className="hr-container">
+            <div className="home-sec-header text-center">
+              <div className="home-pill-gray">ON THE JOB</div>
+              <h2 className="home-sec-title">See The Work In Motion</h2>
+              <p className="home-sec8-sub">
+                Step onto a JRC job site and see the craft behind the finished room.
+              </p>
+            </div>
+
+            <div className="home-sec8-grid">
+              {homeShowcaseVideos.map((clip) => {
+                const isPlaying = playingVideo === clip.id;
+                return (
+                  <div
+                    className={`home-sec8-card ${isPlaying ? 'is-playing' : ''}`}
+                    key={clip.id}
+                  >
+                    <video
+                      ref={(el) => { videoRefs.current[clip.id] = el; }}
+                      className="home-sec8-video-el"
+                      src={clip.src}
+                      preload="metadata"
+                      playsInline
+                      controls={isPlaying}
+                      onPlay={() => handleVideoPlay(clip.id)}
+                      onPause={() => setPlayingVideo((current) => (current === clip.id ? null : current))}
+                      onEnded={() => setPlayingVideo(null)}
+                    />
+
+                    {/* Poster overlay — hidden once the clip is running */}
+                    <div className="home-sec8-overlay" aria-hidden={isPlaying}>
+                      <span className="home-sec8-length">{clip.length}</span>
+
+                      <button
+                        type="button"
+                        className="home-sec8-play"
+                        onClick={() => handleVideoPlay(clip.id, true)}
+                        aria-label={`Play ${clip.title}`}
+                      >
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+                          <path d="M8 5.14v13.72a.5.5 0 0 0 .77.42l10.4-6.86a.5.5 0 0 0 0-.84L8.77 4.72a.5.5 0 0 0-.77.42Z" />
+                        </svg>
+                      </button>
+
+                      <div className="home-sec8-caption">
+                        <h3 className="home-sec8-title">{clip.title}</h3>
+                        <p className="home-sec8-text">{clip.caption}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+        {/* ==========================================
+            SECTION 9: TESTIMONIALS (DARK NAVY 3D CUBE)
            ========================================== */}
         <section className="about-sec5-section" style={{ backgroundColor: "#132B45", color: "#FFFFFF" }}>
           <div
