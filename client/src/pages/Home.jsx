@@ -1,6 +1,12 @@
 ﻿import React, { useState, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
 import C3DRectangularCubeSlider from '../components/about/C3DRectangularCubeSlider';
 import BeforeAfterSlider from '../components/common/BeforeAfterSlider';
 import useParallaxImages from '../hooks/useParallaxImages';
@@ -293,17 +299,54 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Construction Showcase Video Card */}
-            <div className="home-sec2-showcase-box">
-              <video
-                src="/assets/videos/sec2-construction-video.mp4"
-                poster="/assets/images/sec2-construction-video-thumb.jpg"
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="home-sec2-showcase-video"
-              />
+            {/* Construction Showcase Video Grid */}
+            {/* Construction Showcase Video Slider */}
+            <div className="home-sec2-showcase-slider-container">
+              <Swiper
+                loop={true}
+                modules={[Navigation, Pagination, Autoplay]}
+                spaceBetween={20}
+                slidesPerView={1}
+                navigation
+                pagination={{ clickable: true }}
+                autoplay={{ delay: 5000, disableOnInteraction: false }}
+                breakpoints={{
+                  640: { slidesPerView: 2 },
+                  1024: { slidesPerView: 4 }
+                }}
+                className="home-sec2-video-swiper"
+              >
+                <SwiperSlide>
+                  <div className="home-sec2-iframe-wrapper">
+                    <iframe src="https://www.youtube.com/embed/qYmNisQRqJY" title="kitchen Remodeling | JRC Colorado | Testimonial" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+                  </div>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <div className="home-sec2-iframe-wrapper">
+                    <iframe src="https://www.youtube.com/embed/N2gZoxeZ-Do" title="Bathroom Remodeling Services | Colorado" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+                  </div>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <div className="home-sec2-iframe-wrapper">
+                    <iframe src="https://www.youtube.com/embed/QaoNyK-t6jE" title="BATH REMODLING" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+                  </div>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <div className="home-sec2-iframe-wrapper">
+                    <iframe src="https://www.youtube.com/embed/AzZqkkGm_OU" title="Transform Your Bathroom Starting at " frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+                  </div>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <div className="home-sec2-iframe-wrapper">
+                    <iframe src="https://www.youtube.com/embed/G425lEXqgPs" title="Bathroom Remodeling Starting at " frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+                  </div>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <div className="home-sec2-iframe-wrapper">
+                    <iframe src="https://www.youtube.com/embed/VtiwBycFHIo" title="Jrc hook" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+                  </div>
+                </SwiperSlide>
+              </Swiper>
             </div>
           </div>
         </section>

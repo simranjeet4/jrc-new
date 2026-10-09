@@ -112,6 +112,20 @@
     height: auto !important;
   }
 
+  /* Prevent video iframes with aspect-ratio containers from collapsing to height: auto */
+  .kit-video-frame iframe,
+  .kit-videos iframe,
+  .base-video-frame iframe,
+  .base-videos iframe,
+  .home-sec2-iframe-wrapper iframe,
+  .bath-video iframe {
+    height: 100% !important;
+    width: 100% !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+  }
+
   [style*="marginLeft"], [style*="marginRight"] {
     margin-left: 0 !important;
     margin-right: 0 !important;
